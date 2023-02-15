@@ -6,7 +6,7 @@
 #    By: hel-kame <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/07 14:49:59 by hel-kame          #+#    #+#              #
-#    Updated: 2023/02/10 19:55:04 by hel-kame         ###   ########.fr        #
+#    Updated: 2023/02/14 14:44:25 by hel-kame         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,15 +16,16 @@ SRC_DIR = src
 
 BIN_DIR = bin/
 
-SRC =	$(SRC_DIR)/main.c		\
-		$(SRC_DIR)/utils.c		\
+SRC =	$(SRC_DIR)/main.c			\
+		$(SRC_DIR)/utils.c			\
+		$(SRC_DIR)/get_time.c		\
 
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(BIN_DIR)%.o)
 
 INCLUDES = ./includes
 
-CFLAGS = -I$(INCLUDES)
+CFLAGS = -I$(INCLUDES) -g3
 
 all :	$(NAME)
 

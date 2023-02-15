@@ -6,7 +6,7 @@
 /*   By: hel-kame <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 15:52:05 by hel-kame          #+#    #+#             */
-/*   Updated: 2023/02/10 19:58:25 by hel-kame         ###   ########.fr       */
+/*   Updated: 2023/02/15 18:37:19 by hel-kame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ static int	check_argc(int argc, char **argv)
 	int		i;
 	int		y;
 
-	i = 1;
 	while (i < argc)
 	{
 		y = 0;
@@ -40,47 +39,68 @@ static int	check_argc(int argc, char **argv)
 	return (0);
 }
 
-static void	init_struct(int argc, char **argv, t_philo *p)
+static void	init_struct(int argc, char **argv, t_philo *p, t_info *info)
 {
-	p->nb_philo = ft_atoi(argv[1]);
-	p->time_die = ft_atoi(argv[2]);
-	p->time_eat = ft_atoi(argv[3]);
-	p->time_sleep = ft_atoi(argv[4]);
-	p->must_eat = 0;
+	info->nb_philo = ft_atoi(argv[1]);
+	info->time_die = ft_atoi(argv[2]);
+	info->time_eat = ft_atoi(argv[3]);
+	info->time_sleep = ft_atoi(argv[4]);
+	info->must_eat = 0;
 	if (argc == 6)
-		p->must_eat = ft_atoi(argv[5]);
-}
-
-void *create_thread(void *th)
-{
-	int *id = (int *)th;
-	static int s = 0;
-
-	s++;
-	printf("Thread ID: %d, Static: %d\n", *id, s);
-	return (NULL);
+		info->must_eat = ft_atoi(argv[5]);
 }
 
 int	main(int argc, char **argv)
 {
-	t_philo		p;
-	pthread_t	t_id;
-	int i;
+	t_philo		*p;
+	t_info		*info;
 
-	i = 0;
 	if (argc != 5 && argc != 6)
 	{
 		write(2, "Bad usage.\n", 11);
 		return (-1);
-	}
+	}	
 	if (check_argc(argc, argv) == -1)
 		return (-1);
-	init_struct(argc, argv, &p);
-	while (i < p.nb_philo)
+	p = malloc(sizeof(t_philo) * ft_atoi(argv[1]));
+	if (!info || !p)
+		return (0);
+	init_struct(argc, argv, p, info);
+	for (i = 1; i <= 5; i++)
 	{
-		pthread_create(&t_id, NULL, create_thread, (void *)&t_id);
-		i++;
+		k = pthread_mutex_init(&chopstick[i], NULL);
+		if (k == -1)
+		{
+			printf("Failed to initialize the mutex\n");
+			exit(1);
+		}
 	}
-	pthread_exit(NULL);
+	for (i = 1; i <= 5; i++)
+	{
+		k = pthread_create(&philosopher[i], NULL, (void *)func, (int *)i);
+		if (k != 0)
+		{
+			printf("Error in thread creation.\n");
+			exit(1);
+		}
+	}
+	for (i = 1; i <= 5; i++)
+	{
+		k = pthread_join(philosopher[i], &message);
+		if (k != 0)
+		{
+			printf("Failed to join the thread.\n");
+			exit(1);
+		}
+	}
+	for (i = 1; i <= 5; i++)
+	{
+		k = pthread_mutex_destroy(&chopstick[i]);
+		if (k != 0)
+		{
+			printf("Mutex destroyed.\n");
+			exit(1);
+		}
+	}
 	return (0);
 }
